@@ -11,7 +11,7 @@ class PositionInline(admin.TabularInline):
 
 @admin.register(Vessel)
 class VesselAdmin(admin.ModelAdmin):
-    list_display = ('id', 'mmsi', 'num_positions',)
+    list_display = ('id', 'mmsi', 'num_positions', 'total_positions', 'dist_covered',)
     inlines = (PositionInline,)
 
 

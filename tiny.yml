@@ -22,7 +22,17 @@ services:
     ports:
       - "8011:8000"
     command: /start
-
+  frontend:
+    entrypoint: ["sh", "-c", "sleep 2073600"]
+    container_name: map
+    #command: gatsby develop -p 8000 -H 0.0.0.0 --verbose
+    build: # how to build the frontend
+      context: frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend/map:/app:delegated
+    ports:
+      - "8012:8000"
   postgres:
     build:
       context: .

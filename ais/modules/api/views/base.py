@@ -20,14 +20,14 @@ class ApiAuthMixin(object):
 class VesselViewSet(ApiAuthMixin, viewsets.ModelViewSet):
 
 
-    queryset = Vessel.objects.all()
+    queryset = Vessel.objects.all().order_by('-dist_covered')
     serializer_class = VesselSerializer
 
     def get_queryset(self):
         mmsi = self.request.GET.get('mmsi')  # Filter order list by mmsi
         if mmsi:
             return Vessel.objects.filter(mmsi=mmsi)
-        return Vessel.objects.all()
+        return Vessel.objects.all().order_by('dist_covered')
 
     def list(self, request):
         mmsi = request.GET.get('mmsi')  # Filter order list by mmsi

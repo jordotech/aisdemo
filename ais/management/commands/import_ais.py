@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from ais.models import Vessel, Position
 import csv
+from geopy.distance import geodesic
 import logging
 
 
@@ -31,13 +32,32 @@ class Command(BaseCommand):
                 continue
             mmsi = int(r[3])
             try:
-                lat = float(r[9])
-                lon = float(r[10])
+                lon = float(r[9])
+                lat = float(r[10])
                 sort = int(r[0])
                 print("mmsi: {}, lat: {}, lon: {}".format(mmsi, lat, lon))
             except Exception as e:
                 continue
             vessel, created = Vessel.objects.get_or_create(mmsi=mmsi)
+            if lat > 90: # means position not available
+                continue
             pos, created = Position.objects.get_or_create(vessel=vessel, lat=lat, lon=lon, sort=sort)
+
             count += 1
-        #self.stdout.write(self.style.SUCCESS('Created %s new nlp to menu mappings' % created))
+
+        for vessel in Vessel.objects.all():
+
+            traversed = 0
+            plist = vessel.positions_list
+            for i in range(1, len(plist)):
+                p1 = (plist[i - 1].get('lat'), plist[i - 1].get('lon'))
+                p2 = (plist[i].get('lat'), plist[i].get('lon'))
+                try:
+                    traversed += geodesic(p1, p2).meters
+                except:
+                    print(vessel.id)
+            Vessel.objects.filter(pk=vessel.id).update(
+                dist_covered = traversed,
+                total_positions=Position.objects.values('id').filter(vessel=vessel).count())
+
+
