@@ -12,6 +12,7 @@ urlpatterns = [
     ),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
+    path('api/', include('ais.modules.api.urls.base')),
     # User management
     path("users/", include("jordotech.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
