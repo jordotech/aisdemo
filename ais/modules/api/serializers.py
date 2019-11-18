@@ -16,6 +16,7 @@ class VesselSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vessel
         fields = (
+            'id',
             'mmsi',
             'positions',
         )
